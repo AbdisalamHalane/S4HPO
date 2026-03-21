@@ -1,0 +1,91 @@
+{
+  "experiment_name": "cifar_hpo",
+  "run_command": [
+    "python",
+    "-m",
+    "train",
+    "experiment=lra/s4-cifar",
+    "wandb.mode=disabled"
+  ],
+  "epoch_option": "trainer.max_epochs",
+  "result": {
+    "metric": "val_accuracy",
+    "mode": "max",
+    "regex": "val/accuracy:\\s*([0-9.]+)"
+  },
+  "resources": {
+    "cpu_num": 2,
+    "gpu_num": 1
+  },
+  "hpo_methods": {
+    "random_search": {
+      "stages": [
+        {
+          "num_trials": 15,
+          "epochs": 5
+        }
+      ]
+    },
+    "bayesian_optimization": {
+      "stages": [
+        {
+          "num_trials": 15,
+          "epochs": 5
+        }
+      ]
+    },
+    "successive_halving": {
+      "stages": [
+        {
+          "num_trials": 2,
+          "epochs": 1
+        },
+        {
+          "num_trials": 2,
+          "epochs": 2
+        },
+        {
+          "num_trials": 1,
+          "epochs": 5
+        }
+      ]
+    }
+  },
+  "hyperparameter_commands": {
+    "lr": {
+      "option": "optimizer.lr",
+      "space": {
+        "type": "loguniform",
+        "min": 0.001,
+        "max": 0.02
+      }
+    },
+    "weight_decay": {
+      "option": "optimizer.weight_decay",
+      "space": {
+        "type": "loguniform",
+        "min": 0.001,
+        "max": 0.1
+      }
+    },
+    "n_layers": {
+      "option": "model.n_layers",
+      "space": {
+        "type": "choice",
+        "values": [4, 6, 8]
+      }
+    },
+    "d_model": {
+      "option": "model.d_model",
+      "space": {
+        "type": "choice",
+        "values": [256, 384, 512]
+      }
+    }
+  },
+  "paths": {
+    "working_directory": "/content/s4",
+    "results_dir": "results/cifar",
+    "ray_results_dir": "file:///content/s4/ray_results/cifar"
+  }
+}
