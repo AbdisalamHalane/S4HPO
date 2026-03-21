@@ -22,7 +22,7 @@
       "stages": [
         {
           "num_trials": 15,
-          "epochs": 5
+          "epochs": 4
         }
       ]
     },
@@ -30,7 +30,7 @@
       "stages": [
         {
           "num_trials": 15,
-          "epochs": 5
+          "epochs": 4
         }
       ]
     },
