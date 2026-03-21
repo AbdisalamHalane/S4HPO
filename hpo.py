@@ -177,7 +177,7 @@ class HPO:
 
         results = tuner.fit()
         return results
-'''
+
     def optimize_successive_halving(self):
         ray.shutdown()
         ray.init(ignore_reinit_error=True, log_to_driver=True)
@@ -234,7 +234,7 @@ class HPO:
 
         results = tuner.fit()
         return results
-'''
+        
     def optimize_bayesian_optimization(self):
         ray.shutdown()
         ray.init(ignore_reinit_error=True, log_to_driver=True)
