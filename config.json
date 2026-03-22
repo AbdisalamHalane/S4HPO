@@ -17,10 +17,8 @@
     "model.layer.dt_min=0.001",
     "model.layer.dt_max=0.1",
     "model.layer.init=legs",
-    "scheduler.num_training_steps=1406",
-    "scheduler.num_warmup_steps=140",
-    "trainer.limit_train_batches=0.02",
-    "trainer.limit_val_batches=0.02"
+    "trainer.limit_train_batches=0.4",
+    "trainer.limit_val_batches=0.4"
   ],
   "epoch_option": "trainer.max_epochs",
   "result": {
