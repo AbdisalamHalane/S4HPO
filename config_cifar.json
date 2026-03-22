@@ -1,13 +1,11 @@
 {
-  "experiment_name": "imdb_hpo",
+  "experiment_name": "cifar_hpo",
   "run_command": [
     "python",
     "-m",
     "train",
-    "experiment=lra/s4-imdb",
-    "wandb.mode=disabled",
-    "trainer.limit_train_batches=0.02",
-    "trainer.limit_val_batches=0.02"
+    "experiment=lra/s4-cifar",
+    "wandb.mode=disabled"
   ],
   "epoch_option": "trainer.max_epochs",
   "result": {
@@ -23,24 +21,24 @@
     "random_search": {
       "stages": [
         {
-          "num_trials": 10,
-          "epochs": 2
+          "num_trials": 15,
+          "epochs": 4
         }
       ]
     },
     "bayesian_optimization": {
       "stages": [
         {
-          "num_trials": 10,
-          "epochs": 2
+          "num_trials": 15,
+          "epochs": 4
         }
       ]
     },
     "successive_halving": {
       "stages": [
-        { "num_trials": 8, "epochs": 1 },
-        { "num_trials": 4, "epochs": 2 },
-        { "num_trials": 2, "epochs": 4 },
+        { "num_trials": 12, "epochs": 1 },
+        { "num_trials": 6, "epochs": 2 },
+        { "num_trials": 3, "epochs": 4 },
         { "num_trials": 1, "epochs": 8 }
       ]
     }
@@ -50,7 +48,7 @@
       "option": "optimizer.lr",
       "space": {
         "type": "loguniform",
-        "min": 0.005,
+        "min": 0.001,
         "max": 0.02
       }
     },
@@ -58,8 +56,8 @@
       "option": "optimizer.weight_decay",
       "space": {
         "type": "loguniform",
-        "min": 0.02,
-        "max": 0.08
+        "min": 0.001,
+        "max": 0.1
       }
     },
     "n_layers": {
@@ -73,20 +71,13 @@
       "option": "model.d_model",
       "space": {
         "type": "choice",
-        "values": [192, 256, 320]
-      }
-    },
-    "batch_size": {
-      "option": "loader.batch_size",
-      "space": {
-        "type": "choice",
-        "values": [8, 16, 24]
+        "values": [256, 384, 512]
       }
     }
   },
   "paths": {
     "working_directory": "/content/s4",
-    "results_dir": "results/imdb",
-    "ray_results_dir": "file:///content/s4/ray_results/imdb"
+    "results_dir": "results/cifar",
+    "ray_results_dir": "file:///content/s4/ray_results/cifar"
   }
 }
