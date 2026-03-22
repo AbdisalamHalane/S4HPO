@@ -5,7 +5,20 @@
     "-m",
     "train",
     "experiment=lra/s4-imdb",
-    "wandb.mode=disabled",
+    "wandb=null",
+    "dataset.val_split=0.1",
+    "model.layer.d_state=4",
+    "model.prenorm=true",
+    "model.norm=batch",
+    "model.layer.bidirectional=true",
+    "model.layer.n_ssm=1",
+    "model.layer.lr.A=0.001",
+    "model.layer.lr.B=0.001",
+    "model.layer.dt_min=0.001",
+    "model.layer.dt_max=0.1",
+    "model.layer.init=legs",
+    "scheduler.num_training_steps=1406",
+    "scheduler.num_warmup_steps=140",
     "trainer.limit_train_batches=0.02",
     "trainer.limit_val_batches=0.02"
   ],
@@ -50,16 +63,16 @@
       "option": "optimizer.lr",
       "space": {
         "type": "loguniform",
-        "min": 0.005,
-        "max": 0.02
+        "min": 0.0005,
+        "max": 0.003
       }
     },
     "weight_decay": {
       "option": "optimizer.weight_decay",
       "space": {
         "type": "loguniform",
-        "min": 0.02,
-        "max": 0.08
+        "min": 0.0001,
+        "max": 0.005
       }
     },
     "n_layers": {
