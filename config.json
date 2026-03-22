@@ -31,7 +31,7 @@
     "bayesian_optimization": {
       "stages": [
         {
-          "num_trials": 10,
+          "num_trials": 6,
           "epochs": 2
         }
       ]
