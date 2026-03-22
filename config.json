@@ -36,18 +36,10 @@
     },
     "successive_halving": {
       "stages": [
-        {
-          "num_trials": 2,
-          "epochs": 1
-        },
-        {
-          "num_trials": 2,
-          "epochs": 2
-        },
-        {
-          "num_trials": 1,
-          "epochs": 5
-        }
+        { "num_trials": 12, "epochs": 1 },
+        { "num_trials": 6, "epochs": 2 },
+        { "num_trials": 3, "epochs": 4 },
+        { "num_trials": 1, "epochs": 8 }
       ]
     }
   },
