@@ -148,9 +148,7 @@ class HPO:
         search_space = self.build_search_space()
 
         stage_index = 0
-        ## here we load the number of trials for this search method from the config
         num_trials = self.config_loader.get_stage_num_trials("random_search", stage_index)
-        ## here we load the max number of epochs for this search method
         max_epochs = self.config_loader.get_stage_epochs("random_search", stage_index)
 
         trainable = tune.with_resources(
@@ -161,22 +159,37 @@ class HPO:
             }
         )
 
-        tuner = tune.Tuner(
-            trainable,
-            param_space=search_space,
-            tune_config=tune.TuneConfig(
-                metric=self.config_loader.get_result_metric(),
-                mode=self.config_loader.get_result_mode(),
-                num_samples=num_trials
-            ),
-            run_config=RunConfig(
-                name="random_search",
-                storage_path=self.config_loader.get_ray_results_dir()
+        storage_path = self.config_loader.get_ray_results_dir()
+        exp_name = "random_search"
+        exp_path = f"{storage_path}/{exp_name}"
+
+        if tune.Tuner.can_restore(exp_path):
+            print(f"Restoring Ray Tune experiment from: {exp_path}")
+            tuner = tune.Tuner.restore(
+                exp_path,
+                trainable=trainable,
+                resume_unfinished=True,
+                resume_errored=True,
+                restart_errored=False,
             )
-        )
+        else:
+            print(f"Starting new Ray Tune experiment at: {exp_path}")
+            tuner = tune.Tuner(
+                trainable,
+                param_space=search_space,
+                tune_config=tune.TuneConfig(
+                    metric=self.config_loader.get_result_metric(),
+                    mode=self.config_loader.get_result_mode(),
+                    num_samples=num_trials
+                ),
+                run_config=RunConfig(
+                    name=exp_name,
+                    storage_path=storage_path
+                )
+            )
 
         results = tuner.fit()
-        return results
+        return resultsa
 
     def optimize_successive_halving(self):
         ray.shutdown()
@@ -234,7 +247,7 @@ class HPO:
 
         results = tuner.fit()
         return results
-        
+
     def optimize_bayesian_optimization(self):
         ray.shutdown()
         ray.init(ignore_reinit_error=True, log_to_driver=True)
