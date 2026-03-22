@@ -255,12 +255,9 @@ class HPO:
         search_space = self.build_search_space()
 
         stage_index = 0
-        ## here we load the number of trials for this search method from the config
         num_trials = self.config_loader.get_stage_num_trials("bayesian_optimization", stage_index)
-        ## here we load the max number of epochs for this search method
         max_epochs = self.config_loader.get_stage_epochs("bayesian_optimization", stage_index)
 
-        ## here we define the bayesian optimization search algorithm
         search_alg = OptunaSearch(
             metric=self.config_loader.get_result_metric(),
             mode=self.config_loader.get_result_mode()
@@ -274,20 +271,35 @@ class HPO:
             }
         )
 
-        tuner = tune.Tuner(
-            trainable,
-            param_space=search_space,
-            tune_config=tune.TuneConfig(
-                metric=self.config_loader.get_result_metric(),
-                mode=self.config_loader.get_result_mode(),
-                num_samples=num_trials,
-                search_alg=search_alg
-            ),
-            run_config=RunConfig(
-                name="bayesian_optimization",
-                storage_path=self.config_loader.get_ray_results_dir()
+        storage_path = self.config_loader.get_ray_results_dir()
+        exp_name = "bayesian_optimization"
+        exp_path = f"{storage_path}/{exp_name}"
+
+        if tune.Tuner.can_restore(exp_path):
+            print(f"Restoring Ray Tune experiment from: {exp_path}")
+            tuner = tune.Tuner.restore(
+                exp_path,
+                trainable=trainable,
+                resume_unfinished=True,
+                resume_errored=True,
+                restart_errored=False,
             )
-        )
+        else:
+            print(f"Starting new Ray Tune experiment at: {exp_path}")
+            tuner = tune.Tuner(
+                trainable,
+                param_space=search_space,
+                tune_config=tune.TuneConfig(
+                    metric=self.config_loader.get_result_metric(),
+                    mode=self.config_loader.get_result_mode(),
+                    num_samples=num_trials,
+                    search_alg=search_alg
+                ),
+                run_config=RunConfig(
+                    name=exp_name,
+                    storage_path=storage_path
+                )
+            )
 
         results = tuner.fit()
         return results
