@@ -54,7 +54,7 @@ def print_successive_halving_results(stage_results, metric_name):
 
 
 def main():
-    config_path = "config.json"
+    config_path = "config_cifar.json"
 
     hpo = HPO(config_path)
     metric_name = hpo.config_loader.get_result_metric()
@@ -62,11 +62,11 @@ def main():
     #random_search_results = hpo.optimize_random_search()
     #print_random_search_results(random_search_results, metric_name)
 
-    bayesian_optimization_results = hpo.optimize_bayesian_optimization()
-    print_bayesian_optimization_results(bayesian_optimization_results, metric_name)
+    #bayesian_optimization_results = hpo.optimize_bayesian_optimization()
+    #print_bayesian_optimization_results(bayesian_optimization_results, metric_name)
 
-    #successive_halving_results = hpo.optimize_successive_halving()
-    #print_successive_halving_results(successive_halving_results, metric_name)
+    successive_halving_results = hpo.optimize_successive_halving()
+    print_successive_halving_results(successive_halving_results, metric_name)
 
 
 if __name__ == "__main__":
