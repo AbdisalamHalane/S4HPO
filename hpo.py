@@ -110,11 +110,11 @@ class HPO:
         regex_pattern = self.config_loader.get_result_regex()
         metric_name = self.config_loader.get_result_metric()
 
-        match = re.search(regex_pattern, output_text)
+        matches = re.findall(regex_pattern, output_text)
 
         ## check to see if we have found a metric using regex
         ## grab the metric from the latest. 
-        if match and result.returncode == 0:
+        if matches and result.returncode == 0:
             result_value = float(matches[-1])
         else:
             result_value = float("-inf")
@@ -341,7 +341,7 @@ class HPO:
             "all_stage_results": all_stage_results
         }
 
-    
+
     def optimize_bayesian_optimization(self):
         ray.shutdown()
         ray.init(ignore_reinit_error=True, log_to_driver=True)
