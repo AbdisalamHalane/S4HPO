@@ -113,8 +113,9 @@ class HPO:
         match = re.search(regex_pattern, output_text)
 
         ## check to see if we have found a metric using regex
+        ## grab the metric from the latest. 
         if match and result.returncode == 0:
-            result_value = float(match.group(1))
+            result_value = float(matches[-1])
         else:
             result_value = float("-inf")
 
@@ -275,10 +276,11 @@ class HPO:
         ray.shutdown()
         ray.init(ignore_reinit_error=True, log_to_driver=True)
 
+        ## get the number of stages. 
+
         stages = self.config_loader.get_hpo_method_stages("successive_halving")
 
-        if len(stages) == 0:
-            raise ValueError("No stages defined for successive_halving.")
+        ## if not stages are specified this step will early exit on error.
 
         initial_num_trials = stages[0]["num_trials"]
         surviving_configs = self.sample_unique_configs(initial_num_trials)
@@ -339,7 +341,7 @@ class HPO:
             "all_stage_results": all_stage_results
         }
 
-
+    
     def optimize_bayesian_optimization(self):
         ray.shutdown()
         ray.init(ignore_reinit_error=True, log_to_driver=True)
@@ -350,6 +352,8 @@ class HPO:
         num_trials = self.config_loader.get_stage_num_trials("bayesian_optimization", stage_index)
         max_epochs = self.config_loader.get_stage_epochs("bayesian_optimization", stage_index)
 
+        ## ray tune requires the actual search algorithm (for Bayesian optimization) from an external library, in this case 
+        ## we use Optuna Search. 
         search_alg = OptunaSearch(
             metric=self.config_loader.get_result_metric(),
             mode=self.config_loader.get_result_mode()
@@ -367,6 +371,8 @@ class HPO:
         exp_name = "bayesian_optimization"
         exp_path = f"{storage_path}/{exp_name}"
 
+        ## checks to see if we can restore our ray tune search via the logs in the case that we 
+        ## had an early exit, resume if possible other we keep going.
         if tune.Tuner.can_restore(exp_path):
             print(f"Restoring Ray Tune experiment from: {exp_path}")
             tuner = tune.Tuner.restore(
@@ -393,5 +399,6 @@ class HPO:
                 )
             )
 
+        ## return results. 
         results = tuner.fit()
         return results
